@@ -180,3 +180,20 @@ resource "snowflake_table_constraint" "fk_product_id" {
       }
     }
 }
+
+resource "snowflake_file_format" "e_comm_csv_format" {
+  name     = "E_COMM_CSV_FORMAT"
+  database = snowflake_database.terraform_database.name
+  schema   = snowflake_schema.e_commerce_schema.name
+  comment = "CSV file format created and managed by Terraform"
+  format_type = "CSV"
+  skip_header = 1
+}
+
+resource "snowflake_stage" "e_comm_int_stage" {
+  name     = "E_COMM_INT_STAGE"
+  database = snowflake_database.terraform_database.name
+  schema   = snowflake_schema.e_commerce_schema.name
+  comment = "Internal stage created and managed by Terraform"
+  file_format = snowflake_file_format.e_comm_csv_format.name
+}
