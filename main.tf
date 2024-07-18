@@ -6,12 +6,14 @@ provider "snowflake" {
   warehouse = var.warehouse
 }
 
+// Database
 resource "snowflake_database" "terraform_database" {
   name                        = var.database
   comment                     = "Database created and managed by Terraform"
   data_retention_time_in_days = 10
 }
 
+// Schema
 resource "snowflake_schema" "e_commerce_schema" {
   name     = "E_COMMERCE"
   database = snowflake_database.terraform_database.name
@@ -19,6 +21,7 @@ resource "snowflake_schema" "e_commerce_schema" {
   data_retention_days = snowflake_database.terraform_database.data_retention_time_in_days
 }
 
+// Customers Table
 resource "snowflake_table" "customers" {
   name      = "CUSTOMERS"
   database  = snowflake_database.terraform_database.name
@@ -51,6 +54,7 @@ resource "snowflake_table" "customers" {
   }
 }
 
+// Products Table
 resource "snowflake_table" "products" {
   name      = "PRODUCTS"
   database  = snowflake_database.terraform_database.name
@@ -83,6 +87,7 @@ resource "snowflake_table" "products" {
   }
 }
 
+// Orders Table
 resource "snowflake_table" "orders" {
   name      = "ORDERS"
   database  = snowflake_database.terraform_database.name
@@ -110,6 +115,7 @@ resource "snowflake_table" "orders" {
   }
 }
 
+// Order Details Table
 resource "snowflake_table" "order_details" {
   name      = "ORDER_DETAILS"
   database  = snowflake_database.terraform_database.name
@@ -142,6 +148,7 @@ resource "snowflake_table" "order_details" {
   }
 }
 
+// Foreign Key for Orders Table and Customers Table
 resource "snowflake_table_constraint" "fk_customer_id" {
     name = "FK_CUSTOMER_ID"
     type = "FOREIGN KEY"
@@ -155,6 +162,7 @@ resource "snowflake_table_constraint" "fk_customer_id" {
     }
 }
 
+// Foreign Key for Order Details Table and Orders Table
 resource "snowflake_table_constraint" "fk_order_id" {
     name = "FK_ORDER_ID"
     type = "FOREIGN KEY"
@@ -168,6 +176,7 @@ resource "snowflake_table_constraint" "fk_order_id" {
     }
 }
 
+// Foreign Key for Order Details Table and Products Table
 resource "snowflake_table_constraint" "fk_product_id" {
     name = "FK_PRODUCT_ID"
     type = "FOREIGN KEY"
@@ -181,6 +190,7 @@ resource "snowflake_table_constraint" "fk_product_id" {
     }
 }
 
+// File Format
 resource "snowflake_file_format" "e_comm_csv_format" {
   name     = "E_COMM_CSV_FORMAT"
   database = snowflake_database.terraform_database.name
@@ -190,6 +200,7 @@ resource "snowflake_file_format" "e_comm_csv_format" {
   skip_header = 1
 }
 
+// Internal Stage
 resource "snowflake_stage" "e_comm_int_stage" {
   name     = "E_COMM_INT_STAGE"
   database = snowflake_database.terraform_database.name
@@ -197,6 +208,7 @@ resource "snowflake_stage" "e_comm_int_stage" {
   comment = "Internal stage created and managed by Terraform"
 }
 
+// Procedure
 resource "snowflake_procedure" "load_customers" {
   name     = "LOAD_CUSTOMERS"
   database = snowflake_database.terraform_database.name
