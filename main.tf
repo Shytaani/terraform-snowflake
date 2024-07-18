@@ -195,7 +195,6 @@ resource "snowflake_stage" "e_comm_int_stage" {
   database = snowflake_database.terraform_database.name
   schema   = snowflake_schema.e_commerce_schema.name
   comment = "Internal stage created and managed by Terraform"
-  file_format = snowflake_file_format.e_comm_csv_format.name
 }
 
 resource "snowflake_procedure" "load_customers" {
