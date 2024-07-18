@@ -197,3 +197,19 @@ resource "snowflake_stage" "e_comm_int_stage" {
   comment = "Internal stage created and managed by Terraform"
   file_format = snowflake_file_format.e_comm_csv_format.name
 }
+
+resource "snowflake_procedure" "load_customers" {
+  name     = "LOAD_CUSTOMERS"
+  database = snowflake_database.terraform_database.name
+  schema   = snowflake_schema.e_commerce_schema.name
+  language = "SQL"
+  comment = "Procedure to load customers data"
+  return_type = "VARCHAR"
+  statement = <<EOT
+    COPY INTO CUSTOMERS
+    FROM @E_COMM_INT_STAGE/CUSTOMERS.csv
+    FILE_FORMAT = (FORMAT_NAME = E_COMM_CSV_FORMAT)
+    ON_ERROR = 'CONTINUE';
+  EOT
+  
+}
