@@ -214,11 +214,16 @@ resource "snowflake_procedure" "load_customers" {
   database = snowflake_database.terraform_database.name
   schema   = snowflake_schema.e_commerce_schema.name
   language = "SQL"
+  arguments {
+    name = "FILE_NAME"
+    type = "VARCHAR"
+  }
   comment = "Procedure to load customers data"
   return_type = "VARCHAR"
+  execute_as = "CALLER"
   statement = <<EOT
     COPY INTO CUSTOMERS
-    FROM @E_COMM_INT_STAGE/CUSTOMERS.csv
+    FROM @E_COMM_INT_STAGE/FILE_NAME
     FILE_FORMAT = (FORMAT_NAME = E_COMM_CSV_FORMAT)
     ON_ERROR = 'CONTINUE';
   EOT
